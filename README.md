@@ -1,5 +1,14 @@
 # agentflow — 轻量 Agent 编排框架
 
+![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![asyncio](https://img.shields.io/badge/asyncio-3776AB?style=flat-square)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white)
+![MCP](https://img.shields.io/badge/MCP-1C3C3C?style=flat-square)
+![pytest](https://img.shields.io/badge/pytest-0A9EDC?style=flat-square&logo=pytest&logoColor=white)
+
+![Coverage](https://img.shields.io/badge/Coverage-89%25-4C9F70?style=flat-square)
+![Tests](https://img.shields.io/badge/Tests-43%20passed-4C9F70?style=flat-square)
+
 从多智能体项目中沉淀出的轻量 Agent 编排框架：**DAG 图编排 + StateGraph 状态机 + SQLite Checkpoint 持久化 + MCP 工具生态**。
 
 > 技术栈：Python 3.11+、asyncio、SQLite、MCP（stdio / SSE）、pytest
