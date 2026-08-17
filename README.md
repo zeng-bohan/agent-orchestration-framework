@@ -1,4 +1,4 @@
-# agentflow — 轻量 Agent 编排框架
+# agentflow — 轻量 Agent 编排框架 · Lightweight Agent Orchestration Framework
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
 ![asyncio](https://img.shields.io/badge/asyncio-3776AB?style=flat-square)
@@ -8,6 +8,8 @@
 
 ![Coverage](https://img.shields.io/badge/Coverage-89%25-4C9F70?style=flat-square)
 ![Tests](https://img.shields.io/badge/Tests-43%20passed-4C9F70?style=flat-square)
+
+> **agentflow** — a lightweight agent orchestration framework: DAG graph, StateGraph state machine, SQLite checkpoints (resume / retry / idempotent), MCP tool registry (stdio / SSE) and Skills discovery. **89%** test coverage · **43** tests passing.
 
 从多智能体项目中沉淀出的轻量 Agent 编排框架：**DAG 图编排 + StateGraph 状态机 + SQLite Checkpoint 持久化 + MCP 工具生态**。
 
