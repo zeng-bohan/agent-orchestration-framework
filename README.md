@@ -1,5 +1,13 @@
 # agentflow — 轻量 Agent 编排框架 · Lightweight Agent Orchestration Framework
 
+
+![Banner](docs/banner.svg)
+
+> Lightweight agent orchestration framework: DAG graph, StateGraph state machine, SQLite checkpoints, MCP tool registry and Skills discovery.
+
+**Topics:** `agent` · `orchestration` · `dag` · `mcp` · `sqlite` · `asyncio` · `testing`
+
+
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
 ![asyncio](https://img.shields.io/badge/asyncio-3776AB?style=flat-square)
 ![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white)
@@ -191,3 +199,23 @@ agentflow/
 ## 许可
 
 Apache 2.0
+
+---
+
+## 🤝 贡献
+
+```bash
+git clone https://github.com/zengbohan1/agent-orchestration-framework
+cd agent-orchestration-framework
+python -m venv .venv && .venv/Scripts/python -m pip install -r requirements.txt
+pytest --cov=agentflow
+```
+
+## 📜 License
+
+[MIT](LICENSE)
+
+## 🙏 致谢
+
+- MCP 协议（Anthropic）的工具生态设计灵感
+- asyncio 并发编程的实践参考
