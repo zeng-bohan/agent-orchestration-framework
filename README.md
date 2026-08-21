@@ -1,221 +1,85 @@
-# agentflow — 轻量 Agent 编排框架 · Lightweight Agent Orchestration Framework
+# agentflow
 
+A lightweight Python framework for orchestrating agent workflows with DAG scheduling, stateful recovery, MCP tools, and skill discovery.
 
-![Banner](docs/banner.svg)
-
-> Lightweight agent orchestration framework: DAG graph, StateGraph state machine, SQLite checkpoints, MCP tool registry and Skills discovery.
-
-**Topics:** `agent` · `orchestration` · `dag` · `mcp` · `sqlite` · `asyncio` · `testing`
-
-
-![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)
-![asyncio](https://img.shields.io/badge/asyncio-3776AB?style=flat-square)
-![SQLite](https://img.shields.io/badge/SQLite-003B57?style=flat-square&logo=sqlite&logoColor=white)
-![MCP](https://img.shields.io/badge/MCP-1C3C3C?style=flat-square)
-![pytest](https://img.shields.io/badge/pytest-0A9EDC?style=flat-square&logo=pytest&logoColor=white)
-
-![Coverage](https://img.shields.io/badge/Coverage-89%25-4C9F70?style=flat-square)
+![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)
 ![Tests](https://img.shields.io/badge/Tests-43%20passed-4C9F70?style=flat-square)
+![Coverage](https://img.shields.io/badge/Core%20coverage-89%25-4C9F70?style=flat-square)
+![License](https://img.shields.io/badge/License-Apache--2.0-4EB1BA?style=flat-square)
 
-> **agentflow** — a lightweight agent orchestration framework: DAG graph, StateGraph state machine, SQLite checkpoints (resume / retry / idempotent), MCP tool registry (stdio / SSE) and Skills discovery. **89%** test coverage · **43** tests passing.
+## Highlights
 
-从多智能体项目中沉淀出的轻量 Agent 编排框架：**DAG 图编排 + StateGraph 状态机 + SQLite Checkpoint 持久化 + MCP 工具生态**。
+- **DAG orchestration**: topological layering, cycle detection, and parallel node execution with `asyncio.gather`.
+- **StateGraph**: conditional routing plus SQLite checkpoints for resume, retry, and idempotent execution.
+- **MCP tools**: a versioned tool registry with stdio and SSE transports.
+- **Skill discovery**: scans `SKILL.md` files and registers them as tools.
+- **Testable design**: offline `MockLLM` support; 43 tests passed and 89% core-module coverage at the measured revision.
 
-> 技术栈：Python 3.11+、asyncio、SQLite、MCP（stdio / SSE）、pytest
-> 核心模块测试覆盖率 **89%**，Mock LLM 调用成功率 100%
-
-## 特性
-
-| 能力 | 说明 |
-|------|------|
-| 🕸️ DAG 图编排 | 拓扑分层、**节点级并行调度**（asyncio.gather）、环检测 |
-| 🛣️ 条件边路由 | 条件函数决定下一节点，支持分支流程 |
-| 💾 Checkpoint 持久化 | SQLite 存储节点结果，**断点续传 / 失败重试 / 幂等执行** |
-| 🧩 MCP 工具生态 | 工具注册中心（**热插拔 + 版本管理**），stdio / SSE Transport |
-| 📂 Skills 动态发现 | 扫描目录 `SKILL.md` 自动注册为 Skill 工具 |
-| 🧪 测试工程 | Mock LLM 替代真实模型，覆盖率 80%+，调用成功率 95%+ |
-
-## 安装
+## Install
 
 ```bash
+# Windows
 python -m venv .venv
-.venv/Scripts/python -m pip install -r requirements.txt
+.venv\Scripts\python -m pip install -r requirements.txt
+
+# macOS / Linux
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
 ```
 
-## 快速开始
-
-### 1) DAG 图编排（并行调度）
+## Quick start
 
 ```python
 import asyncio
 from agentflow import Graph, Node
 
 async def fetch(state):
-    return {"data": ["帖子A", "帖子B", "帖子C"]}
-
-async def analyze(state):
-    return {"analysis": f"分析了 {len(state['data'])} 条数据"}
+    return {"items": ["post-a", "post-b"]}
 
 async def summarize(state):
-    return {"summary": f"{state['analysis']}；共 {len(state['data'])} 条"}
+    return {"summary": f"processed {len(state['items'])} items"}
 
 async def main():
-    g = Graph("舆情分析")
-    g.add_node(Node("fetch", fetch))
-    g.add_node(Node("analyze", analyze))
-    g.add_node(Node("summarize", summarize))
-    g.add_edge("fetch", "analyze")
-    g.add_edge("fetch", "summarize")   # 同层并行
-    state = await g.run({})
-    print(state)
+    graph = Graph("analysis")
+    graph.add_node(Node("fetch", fetch))
+    graph.add_node(Node("summarize", summarize))
+    graph.add_edge("fetch", "summarize")
+    print(await graph.run({}))
 
 asyncio.run(main())
 ```
 
-### 2) StateGraph 状态机 + 条件路由 + Checkpoint
+For resumable execution, pass a `SQLiteCheckpointStore` and a stable `run_id` to `StateGraph.run`.
 
-```python
-import asyncio
-from agentflow import SQLiteCheckpointStore, StateGraph
-
-async def crawl(state):
-    return {"pages": 10}
-
-async def positive_report(state):
-    return {"report": f"正面报告（{state['pages']} 页）"}
-
-async def negative_report(state):
-    return {"report": f"负面报告（{state['pages']} 页）"}
-
-async def route(state):
-    return state.get("mood", "positive") == "positive"
-
-async def main():
-    store = SQLiteCheckpointStore("demo.db")
-    g = StateGraph("报告生成")
-    g.add_node("crawl", crawl)
-    g.add_node("positive", positive_report)
-    g.add_node("negative", negative_report)
-    g.add_edge("crawl", "positive", condition=route)
-    g.add_edge("crawl", "negative")
-
-    state = await g.run({"mood": "negative"}, checkpoint=store, run_id="run-demo-1")
-    print(state["report"])
-    # 断点续传：再次运行同 run_id，已成功节点跳过（幂等）
-    state2 = await g.run({"mood": "negative"}, checkpoint=store, run_id="run-demo-1")
-    print("幂等验证:", state2 == state)
-
-asyncio.run(main())
-```
-
-### 3) MCP 工具注册中心（热插拔 + 版本管理）
-
-```python
-import asyncio
-from agentflow import MCPServer, Tool, ToolRegistry
-
-async def add(a: int = 0, b: int = 0) -> int:
-    """加法。"""
-    return a + b
-
-async def main():
-    reg = ToolRegistry()
-    reg.register(Tool(name="add", description="加法", parameters={
-        "type": "object",
-        "properties": {"a": {"type": "integer"}, "b": {"type": "integer"}},
-        "required": ["a", "b"],
-    }, fn=add))
-
-    server = MCPServer(reg)
-    resp = await server.handle({"jsonrpc": "2.0", "id": 1, "method": "tools/list"})
-    print("tools:", resp["result"]["tools"])
-    resp = await server.handle({"jsonrpc": "2.0", "id": 2, "method": "tools/call",
-                                "params": {"name": "add", "arguments": {"a": 1, "b": 2}}})
-    print("call:", resp["result"]["content"][0]["text"])
-
-    # 热更新 + 版本回滚
-    reg.update("add", Tool(name="add", description="加法v2", parameters={}, fn=lambda **k: 0))
-    print("版本历史:", reg.versions("add"))
-    reg.rollback("add")
-
-asyncio.run(main())
-```
-
-### 4) Skills 动态发现
-
-```python
-from agentflow import ToolRegistry
-
-reg = ToolRegistry()
-n = reg.discover_skills("./skills")   # 扫描 skills/**/SKILL.md
-print(f"发现 {n} 个 Skill 工具:", reg.names())
-```
-
-## 架构
-
-```
-┌─────────────────────────────────────────────────────┐
-│                    agentflow                        │
-│                                                     │
-│  Graph ──拓扑分层──► 节点级并行调度 ──► 条件边路由     │
-│    │                                                │
-│    └──► StateGraph ──► SQLite Checkpoint ──► 断点续传│
-│                              │  失败重试 / 幂等      │
-│                                                     │
-│  MCP ──► ToolRegistry（热插拔 / 版本管理）            │
-│    │       ├─ StdioTransport                        │
-│    │       └─ SSETransport                          │
-│    └──► Skills 动态发现（SKILL.md）                  │
-│                                                     │
-│  LLM 抽象 ──► MockLLM（离线/测试） / 真实模型         │
-└─────────────────────────────────────────────────────┘
-```
-
-## 测试
+## Test
 
 ```bash
-.venv/Scripts/python -m pytest tests -q
-.venv/Scripts/python -m pytest tests -q --cov=agentflow --cov-report=term
+# Windows
+.venv\Scripts\python -m pytest tests -q
+.venv\Scripts\python -m pytest tests -q --cov=agentflow --cov-report=term
+
+# macOS / Linux
+.venv/bin/python -m pytest tests -q
+.venv/bin/python -m pytest tests -q --cov=agentflow --cov-report=term
 ```
 
-## 与 LangGraph 对比
+## Project structure
 
-见 [docs/langgraph-comparison.md](docs/langgraph-comparison.md)。
-
-## 目录结构
-
-```
+```text
 agentflow/
-├── graph.py         # DAG 图编排（并行分层、条件边、环检测）
-├── state.py         # StateGraph 状态机（断点续传、失败重试、幂等）
-├── checkpoint.py    # SQLite checkpoint 存储
-├── executor.py      # 统一执行入口
-├── llm.py           # LLM 抽象 + MockLLM
+├── graph.py         # DAG scheduling and conditional edges
+├── state.py         # StateGraph workflow
+├── checkpoint.py    # SQLite checkpoint storage
+├── executor.py      # unified execution entry point
+├── llm.py           # LLM abstraction and MockLLM
 └── mcp/
-    ├── registry.py  # 工具注册中心（热插拔 / 版本管理 / Skills 发现）
-    └── transport.py # stdio / SSE Transport
+    ├── registry.py  # tool registry and skill discovery
+    └── transport.py # stdio and SSE transports
+tests/               # graph, state, executor, and MCP tests
 ```
 
-## 许可
+See [the comparison with LangGraph](docs/langgraph-comparison.md).
 
-Apache 2.0
+## License
 
----
-
-## 🤝 贡献
-
-```bash
-git clone https://github.com/zengbohan1/agent-orchestration-framework
-cd agent-orchestration-framework
-python -m venv .venv && .venv/Scripts/python -m pip install -r requirements.txt
-pytest --cov=agentflow
-```
-
-## 📜 License
-
-[MIT](LICENSE)
-
-## 🙏 致谢
-
-- MCP 协议（Anthropic）的工具生态设计灵感
-- asyncio 并发编程的实践参考
+[Apache License 2.0](LICENSE)
