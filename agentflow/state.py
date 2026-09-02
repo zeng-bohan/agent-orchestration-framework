@@ -89,6 +89,7 @@ class StateGraph:
         run_id = run_id or new_run_id()
         state = dict(initial or {})
         done: set[str] = set()
+        executed: set[str] = set()
 
         if checkpoint is not None:
             if resume:
@@ -117,10 +118,12 @@ class StateGraph:
                     await checkpoint.save(run_id, current, "failed", {}, str(exc))
                 raise StateGraphError(f"节点 {current} 执行失败: {exc}") from exc
             done.add(current)
+            executed.add(current)
             current = await self._next_node(current, state)
 
         state["_run_id"] = run_id
-        state["_executed_nodes"] = sorted(done)
+        # 只记录本次真实执行的节点（恢复跳过的不算），与 done（含历史成功）区分
+        state["_executed_nodes"] = sorted(executed)
         return state
 
     async def _run_with_retry(self, node: Node, state: dict[str, Any]) -> dict[str, Any]:

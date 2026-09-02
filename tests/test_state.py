@@ -169,3 +169,28 @@ async def test_state_graph_resume_false_reruns(checkpoint: SQLiteCheckpointStore
     state2 = await g.run({"a": 1}, checkpoint=checkpoint, run_id="run-false-1", resume=False)
     assert state2["a"] == 2  # 未恢复：a 再次执行
     assert state2["b"] == "b:2"
+
+@pytest.mark.asyncio
+async def test_executed_nodes_only_counts_this_run(checkpoint: SQLiteCheckpointStore):
+    """_executed_nodes 只记录本次真实执行的节点：恢复跳过的不重复计入。"""
+    calls = {"b": 0}
+
+    async def flaky_b(state):
+        calls["b"] += 1
+        if calls["b"] == 1:
+            raise ValueError("第一次失败")
+        return {"b": "ok"}
+
+    g = StateGraph()
+    g.add_node("a", node_a)
+    g.add_node("b", flaky_b)
+    g.add_edge("a", "b")
+
+    with pytest.raises(StateGraphError):
+        await g.run({}, checkpoint=checkpoint, run_id="run-exec-1")
+
+    state = await g.run({}, checkpoint=checkpoint, run_id="run-exec-1")
+    assert state["_executed_nodes"] == ["b"]  # a 从 checkpoint 恢复，未重跑
+    assert calls["b"] == 2  # 失败节点被重做
+    assert state["a"] == 1  # a 的结果来自 checkpoint
+    assert state["b"] == "ok"

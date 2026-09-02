@@ -3,9 +3,10 @@
 A lightweight Python framework for orchestrating agent workflows with DAG scheduling, stateful recovery, MCP tools, and skill discovery.
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)
-![Tests](https://img.shields.io/badge/Tests-43%20passed-4C9F70?style=flat-square)
+![Tests](https://img.shields.io/badge/Tests-44%20passed-4C9F70?style=flat-square)
 ![Coverage](https://img.shields.io/badge/Core%20coverage-89%25-4C9F70?style=flat-square)
 ![License](https://img.shields.io/badge/License-Apache--2.0-4EB1BA?style=flat-square)
+[![CI](https://github.com/zengbohan1/agent-orchestration-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/zengbohan1/agent-orchestration-framework/actions/workflows/ci.yml)
 
 ## Highlights
 
@@ -13,7 +14,7 @@ A lightweight Python framework for orchestrating agent workflows with DAG schedu
 - **StateGraph**: conditional routing plus SQLite checkpoints for resume, retry, and idempotent execution.
 - **MCP tools**: a versioned tool registry with stdio and SSE transports.
 - **Skill discovery**: scans `SKILL.md` files and registers them as tools.
-- **Testable design**: offline `MockLLM` support; 43 tests passed and 89% core-module coverage at the measured revision.
+- **Testable design**: offline `MockLLM` support; 44 tests passed and 89% core-module coverage at the measured revision.
 
 ## Install
 
@@ -26,6 +27,8 @@ python -m venv .venv
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 ```
+
+Or install as a package: `pip install -e .` (see `pyproject.toml`).
 
 ## Quick start
 
@@ -51,6 +54,17 @@ asyncio.run(main())
 
 For resumable execution, pass a `SQLiteCheckpointStore` and a stable `run_id` to `StateGraph.run`.
 
+## Examples
+
+Two runnable examples live in `examples/`:
+
+```bash
+python examples/quickstart.py            # DAG pipeline + conditional routing + checkpoint resume + MCP tools
+python examples/resume_after_failure.py  # failure mid-pipeline, then resume: only the failed node re-runs
+```
+
+`resume_after_failure.py` demonstrates the core production semantics: on the first run `publish` fails after `crawl`/`transform` succeeded; re-running with the same `run_id` reports `_executed_nodes: ['publish']` — the succeeded nodes are restored from the checkpoint and are not recomputed.
+
 ## Test
 
 ```bash
@@ -75,7 +89,9 @@ agentflow/
 └── mcp/
     ├── registry.py  # tool registry and skill discovery
     └── transport.py # stdio and SSE transports
+examples/            # quickstart and resume-after-failure demos
 tests/               # graph, state, executor, and MCP tests
+pyproject.toml       # packaging metadata
 ```
 
 See [the comparison with LangGraph](docs/langgraph-comparison.md).

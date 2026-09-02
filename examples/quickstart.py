@@ -73,7 +73,7 @@ async def main() -> None:
     state = await sg.run({"mood": "negative"}, checkpoint=store, run_id="run-demo-1")
     print("首次执行:", state["report"], "| 执行节点:", state["_executed_nodes"])
     state2 = await sg.run({"mood": "negative"}, checkpoint=store, run_id="run-demo-1")
-    print("断点续传:", state2["report"], "| 幂等执行节点:", state2["_executed_nodes"])
+    print("断点续传:", state2["report"], "| 本次实际执行:", state2["_executed_nodes"], "← crawl 从 checkpoint 恢复，未重跑")
 
     print("\n=== 3) MCP 工具注册中心（stdio/SSE 就绪）===")
     reg = ToolRegistry()
