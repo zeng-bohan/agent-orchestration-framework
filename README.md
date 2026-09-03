@@ -1,4 +1,10 @@
+<p align="center">
+  <img src="docs/banner.svg" width="800" alt="agentflow" />
+</p>
+
 # agentflow
+
+> English | [简体中文](README.zh-CN.md)
 
 A lightweight Python framework for orchestrating agent workflows with DAG scheduling, stateful recovery, MCP tools, and skill discovery.
 
