@@ -12,7 +12,7 @@ A lightweight Python framework for orchestrating agent workflows with DAG schedu
 ![Tests](https://img.shields.io/badge/Tests-44%20passed-4C9F70?style=flat-square)
 ![Coverage](https://img.shields.io/badge/Core%20coverage-89%25-4C9F70?style=flat-square)
 ![License](https://img.shields.io/badge/License-Apache--2.0-4EB1BA?style=flat-square)
-[![CI](https://github.com/zengbohan1/agent-orchestration-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/zengbohan1/agent-orchestration-framework/actions/workflows/ci.yml)
+[![CI](https://github.com/zeng-bohan/agent-orchestration-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/zeng-bohan/agent-orchestration-framework/actions/workflows/ci.yml)
 
 ## Highlights
 
