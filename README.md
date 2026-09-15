@@ -9,8 +9,6 @@
 A lightweight Python framework for orchestrating agent workflows with DAG scheduling, stateful recovery, MCP tools, and skill discovery.
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)
-![Tests](https://img.shields.io/badge/Tests-44%20passed-4C9F70?style=flat-square)
-![Coverage](https://img.shields.io/badge/Core%20coverage-89%25-4C9F70?style=flat-square)
 ![License](https://img.shields.io/badge/License-Apache--2.0-4EB1BA?style=flat-square)
 [![CI](https://github.com/zeng-bohan/agent-orchestration-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/zeng-bohan/agent-orchestration-framework/actions/workflows/ci.yml)
 
