@@ -33,7 +33,7 @@ python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 ```
 
-Or install as a package: `pip install -e .` (see `pyproject.toml`).
+Or install as a package: `pip install -e .` (distribution name `agentflow-lite`, import name `agentflow`).
 
 ## Quick start
 

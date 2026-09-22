@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "agentflow"
+name = "agentflow-lite"
 version = "0.1.0"
 description = "Lightweight agent orchestration: DAG scheduling, StateGraph with SQLite checkpoints, MCP tools, and skill discovery"
 readme = "README.md"

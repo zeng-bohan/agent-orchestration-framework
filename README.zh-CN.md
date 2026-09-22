@@ -33,7 +33,7 @@ python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 ```
 
-也可以作为包安装：`pip install -e .`（见 `pyproject.toml`）。
+也可以作为包安装：`pip install -e .`（发行名 `agentflow-lite`，导入名 `agentflow`）。
 
 ## 快速开始
 
