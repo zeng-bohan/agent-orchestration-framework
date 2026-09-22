@@ -11,6 +11,7 @@ A lightweight Python framework for orchestrating agent workflows with DAG schedu
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/License-Apache--2.0-4EB1BA?style=flat-square)
 [![CI](https://github.com/zeng-bohan/agent-orchestration-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/zeng-bohan/agent-orchestration-framework/actions/workflows/ci.yml)
+![Tests](https://img.shields.io/badge/tests-44%20passing%20%2F%2089%25%20coverage-2EA043?style=flat-square)
 
 ## Highlights
 
@@ -98,7 +99,11 @@ tests/               # graph, state, executor, and MCP tests
 pyproject.toml       # packaging metadata
 ```
 
-See [the comparison with LangGraph](docs/langgraph-comparison.md).
+See [the comparison with LangGraph](docs/langgraph-comparison.md) for the state-management and checkpoint design trade-offs.
+
+## Roadmap
+
+LangGraph-parity capabilities deliberately left out, in priority order: human-in-the-loop interrupts (pause a run awaiting approval), streaming node execution events, annotated reducers for parallel-branch state merging, and Postgres/Redis checkpoint backends beyond SQLite.
 
 ## License
 

@@ -11,6 +11,7 @@
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)
 ![License](https://img.shields.io/badge/License-Apache--2.0-4EB1BA?style=flat-square)
 [![CI](https://github.com/zeng-bohan/agent-orchestration-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/zeng-bohan/agent-orchestration-framework/actions/workflows/ci.yml)
+![Tests](https://img.shields.io/badge/tests-44%20passing%20%2F%2089%25%20coverage-2EA043?style=flat-square)
 
 ## 亮点
 
@@ -98,7 +99,11 @@ tests/               # graph、state、executor、MCP 测试
 pyproject.toml       # 打包元数据
 ```
 
-与 LangGraph 的对比见[这篇文档](docs/langgraph-comparison.md)。
+与 LangGraph 的状态管理与检查点设计取舍，见[这篇对比文档](docs/langgraph-comparison.md)。
+
+## 路线图
+
+有意不做、按优先级排列的 LangGraph 对齐能力：human-in-the-loop 中断（暂停等待人工审批）、节点执行事件流式输出、并行分支状态归并（reducer 语义）、SQLite 之外的 Postgres/Redis 检查点后端。
 
 ## 许可证
 
