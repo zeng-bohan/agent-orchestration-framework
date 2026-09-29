@@ -105,6 +105,14 @@ See [the comparison with LangGraph](docs/langgraph-comparison.md) for the state-
 
 LangGraph-parity capabilities deliberately left out, in priority order: human-in-the-loop interrupts (pause a run awaiting approval), streaming node execution events, annotated reducers for parallel-branch state merging, and Postgres/Redis checkpoint backends beyond SQLite.
 
+## Support
+
+Bugs, questions, and feature ideas: [open an issue](https://github.com/zeng-bohan/agent-orchestration-framework/issues). Bug reports should include reproduction steps and the relevant logs or output.
+
+## Contributing
+
+This is a solo-maintained project. Issues for bugs and ideas are very welcome; for code changes, please open an issue first so the approach can be discussed before you invest time.
+
 ## License
 
 [Apache License 2.0](LICENSE)

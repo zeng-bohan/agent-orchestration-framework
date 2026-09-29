@@ -105,6 +105,14 @@ pyproject.toml       # 打包元数据
 
 有意不做、按优先级排列的 LangGraph 对齐能力：human-in-the-loop 中断（暂停等待人工审批）、节点执行事件流式输出、并行分支状态归并（reducer 语义）、SQLite 之外的 Postgres/Redis 检查点后端。
 
+## 支持
+
+缺陷、问题与功能想法：[提一个 issue](https://github.com/zeng-bohan/agent-orchestration-framework/issues)。缺陷报告请附复现步骤与相关日志或输出。
+
+## 参与
+
+个人维护项目。欢迎通过 issue 反馈缺陷与想法；代码改动请先开 issue 讨论方案再动手。
+
 ## 许可证
 
 [Apache License 2.0](LICENSE)
