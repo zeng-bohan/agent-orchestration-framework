@@ -2,16 +2,19 @@
   <img src="docs/banner.svg" width="800" alt="agentflow" />
 </p>
 
-# agentflow
+<h1 align="center">agentflow</h1>
 
-> English | [简体中文](README.zh-CN.md)
+<p align="center">
+  A lightweight Python framework for orchestrating agent workflows with DAG scheduling, stateful recovery, MCP tools, and skill discovery.
+</p>
 
-A lightweight Python framework for orchestrating agent workflows with DAG scheduling, stateful recovery, MCP tools, and skill discovery.
+<p align="center">
+  English | <a href="README.zh-CN.md">简体中文</a>
+</p>
 
 ![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=flat-square&logo=python&logoColor=white)
-![License](https://img.shields.io/badge/License-Apache--2.0-4EB1BA?style=flat-square)
 [![CI](https://github.com/zeng-bohan/agent-orchestration-framework/actions/workflows/ci.yml/badge.svg)](https://github.com/zeng-bohan/agent-orchestration-framework/actions/workflows/ci.yml)
-![Tests](https://img.shields.io/badge/tests-44%20passing%20%2F%2089%25%20coverage-2EA043?style=flat-square)
+![License](https://img.shields.io/badge/License-Apache--2.0-4EB1BA?style=flat-square)
 
 ## Highlights
 
@@ -20,6 +23,18 @@ A lightweight Python framework for orchestrating agent workflows with DAG schedu
 - **MCP tools**: a versioned tool registry with stdio and SSE transports.
 - **Skill discovery**: scans `SKILL.md` files and registers them as tools.
 - **Testable design**: offline `MockLLM` support; 44 tests passed and 89% core-module coverage at the measured revision.
+
+## Tech stack
+
+| Layer | Technologies |
+| --- | --- |
+| Language & runtime | Python 3.11+, `asyncio` |
+| Orchestration | DAG scheduler (topological layering, parallel execution) + stateful StateGraph |
+| State & recovery | SQLite checkpoint store, per-node execution records |
+| Tool protocol | MCP tool registry over stdio and SSE |
+| Skill discovery | `SKILL.md` scanner → tool registration |
+| Testing | pytest + offline `MockLLM` |
+| Packaging | `pyproject.toml` (distribution name `agentflow-lite`, import name `agentflow`) |
 
 ## Install
 
@@ -59,7 +74,7 @@ asyncio.run(main())
 
 For resumable execution, pass a `SQLiteCheckpointStore` and a stable `run_id` to `StateGraph.run`.
 
-## Examples
+## Demo: resume after failure
 
 Two runnable examples live in `examples/`:
 
@@ -100,6 +115,14 @@ pyproject.toml       # packaging metadata
 ```
 
 See [the comparison with LangGraph](docs/langgraph-comparison.md) for the state-management and checkpoint design trade-offs.
+
+## Notes and gotchas
+
+- **Checkpoint semantics are a design choice, not a bug.** Re-running with the same `run_id` executes only the nodes missing from the checkpoint; succeeded nodes are restored as-is. If you change the graph topology between runs, use a fresh `run_id`.
+- **Fully offline by default.** `MockLLM` replaces the LLM when no API key is configured, so the whole suite and the examples run without network access or model downloads.
+- **Naming.** The PyPI distribution is `agentflow-lite` (plain `agentflow` was taken); the import name stays `agentflow`.
+- **Windows paths.** The venv interpreter lives at `.venv\Scripts\python` on Windows versus `.venv/bin/python` elsewhere — the snippets above cover both.
+- **Deliberate gaps.** Human-in-the-loop interrupts, streaming node events, annotated reducers, and non-SQLite checkpoint backends are roadmap items, not omissions — see [Roadmap](#roadmap).
 
 ## Roadmap
 
